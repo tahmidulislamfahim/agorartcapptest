@@ -1,0 +1,44 @@
+import 'dart:async';
+import 'package:get/get.dart';
+import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
+import 'package:agorartcapptest/features/auth/models/user_model.dart';
+import 'package:agorartcapptest/features/user_list/service/user_list_service.dart';
+
+class UserListController extends GetxController {
+  final UserListService _userListService = UserListService();
+  final AuthController _authController = Get.find<AuthController>();
+
+  final RxList<UserModel> users = <UserModel>[].obs;
+  final RxBool isLoading = false.obs;
+
+  Timer? _timer;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchUsers();
+    // Refresh user online status every 10 seconds
+    _timer = Timer.periodic(const Duration(seconds: 10), (_) => fetchUsers(showLoading: false));
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+  }
+
+  Future<void> fetchUsers({bool showLoading = true}) async {
+    try {
+      if (showLoading) isLoading.value = true;
+      final fetched = await _userListService.getUsers();
+      final myId = _authController.currentUser.value?.id;
+      // Filter out self from list
+      final otherUsers = fetched.where((u) => u.id != myId).toList();
+      users.assignAll(otherUsers);
+    } catch (e) {
+      print('Fetch users error: $e');
+    } finally {
+      if (showLoading) isLoading.value = false;
+    }
+  }
+}
