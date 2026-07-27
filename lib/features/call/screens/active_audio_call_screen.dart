@@ -45,6 +45,26 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 6),
+                  // Live connection status badge
+                  Obx(() => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      controller.connectionStatus.value,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: controller.connectionStatus.value.startsWith('In call')
+                            ? AppColor.accentCall
+                            : controller.connectionStatus.value.contains('Error') || controller.connectionStatus.value.contains('Failed')
+                                ? AppColor.accentReject
+                                : AppColor.secondary,
+                      ),
+                    ),
+                  )),
                 ],
               ),
 
@@ -103,6 +123,35 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                   ],
                 ),
               ),
+              // Agora Debug Log (tap to expand)
+              Obx(() {
+                final logs = controller.agoraLog;
+                if (logs.isEmpty) return const SizedBox.shrink();
+                return Container(
+                  height: 90,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    itemCount: logs.length,
+                    itemBuilder: (_, i) => Text(
+                      logs[i],
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: logs[i].contains('ERROR') || logs[i].contains('EXCEPTION')
+                            ? Colors.redAccent
+                            : logs[i].contains('✅')
+                                ? Colors.greenAccent
+                                : Colors.white70,
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ],
           ),
         ),

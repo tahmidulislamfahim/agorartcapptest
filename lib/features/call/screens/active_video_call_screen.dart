@@ -39,20 +39,55 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                 );
 
               }
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: AppColor.primary),
-                    SizedBox(height: 16),
-                    Text(
-                      'Connecting video stream...',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
-                    ),
+                    const CircularProgressIndicator(color: AppColor.primary),
+                    const SizedBox(height: 16),
+                    Obx(() => Text(
+                      controller.connectionStatus.value,
+                      style: const TextStyle(color: Colors.white70, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    )),
                   ],
                 ),
               );
             }),
+
+            // Live Agora debug log overlay (bottom-left)
+            Positioned(
+              bottom: 110,
+              left: 10,
+              right: 10,
+              child: Obx(() {
+                final logs = controller.agoraLog;
+                if (logs.isEmpty) return const SizedBox.shrink();
+                return Container(
+                  height: 80,
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    itemCount: logs.length,
+                    itemBuilder: (_, i) => Text(
+                      logs[i],
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: logs[i].contains('ERROR') || logs[i].contains('EXCEPTION')
+                            ? Colors.redAccent
+                            : logs[i].contains('✅')
+                                ? Colors.greenAccent
+                                : Colors.white70,
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
 
             // 2. Local Video View (Picture-in-Picture Top Right Window)
             Positioned(
