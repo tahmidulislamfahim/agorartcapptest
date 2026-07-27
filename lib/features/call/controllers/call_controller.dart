@@ -5,7 +5,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agorartcapptest/core/api_endpoint/api_endpoint.dart';
 import 'package:agorartcapptest/core/services/local_service/shared_preferences_helper.dart';
-import 'package:agorartcapptest/core/services/agora_token_generator.dart';
 import 'package:agorartcapptest/routes/app_routes.dart';
 import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
 import 'package:agorartcapptest/features/auth/models/user_model.dart';
@@ -153,24 +152,8 @@ class CallController extends GetxController {
     return 0;
   }
 
-  String _normalizeToken(String rawToken) {
-    var token = rawToken.trim();
-    if (token.isEmpty) return token;
-
-    if (token.startsWith('007')) {
-      final prefix = token.substring(0, 3);
-      var payload = token.substring(3);
-      payload = payload.replaceAll('-', '+').replaceAll('_', '/');
-      final remainder = payload.length % 4;
-      if (remainder > 0) {
-        payload += '=' * (4 - remainder);
-      }
-      return prefix + payload;
-    }
-    return token;
-  }
-
   String _getRtcToken(CallModel call, int myId) {
+
     _addLog('_getRtcToken: myId=$myId, callerId=${call.callerId}, receiverId=${call.receiverId}');
 
     String selectedToken = '';
@@ -190,20 +173,8 @@ class CallController extends GetxController {
           : (call.callerRtcToken ?? '');
     }
 
-    // Always generate/ensure valid zlib-compressed AccessToken2 for channel & UID using Primary Certificate
-    if (call.channelName.isNotEmpty && myId > 0) {
-      _addLog('Generating clean zlib AccessToken2 for UID $myId & Channel ${call.channelName}');
-      selectedToken = AgoraTokenGenerator.buildTokenWithUid(
-        appId: call.agoraAppId ?? ApiEndpoint.agoraAppId,
-        appCertificate: 'cb91ccc8a20d4620aef13c49e4fdc0ad',
-        channelName: call.channelName,
-        uid: myId,
-      );
-    }
-
-    final normalized = _normalizeToken(selectedToken);
-    _addLog('  Final Token (len ${normalized.length}): ${normalized.isEmpty ? "EMPTY!" : normalized.substring(0, 20) + "..."}');
-    return normalized;
+    _addLog('  Backend Token (len ${selectedToken.length}): ${selectedToken.isEmpty ? "EMPTY!" : selectedToken.substring(0, 25) + "..."}');
+    return selectedToken;
   }
 
   // 2. Accept Incoming Call (Receiver side)
