@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:agorartcapptest/core/common/style/app_style.dart';
 import 'package:agorartcapptest/core/constants/app_color.dart';
+import 'package:agorartcapptest/features/splash/controllers/splash_controller.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends GetView<SplashController> {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Touch controller to trigger Get.lazyPut instantiation
+    controller.onInit;
+
+
     return Scaffold(
       body: Container(
         decoration: AppStyle.bgGradientDecoration,

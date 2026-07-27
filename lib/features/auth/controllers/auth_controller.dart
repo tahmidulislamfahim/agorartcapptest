@@ -31,6 +31,18 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<UserModel?> getMe() async {
+    try {
+      final user = await _authService.getMe();
+      currentUser.value = user;
+      await SharedPreferencesHelper.saveUser(user.toJson());
+      return user;
+    } catch (_) {
+      return null;
+    }
+  }
+
+
   Future<void> register() async {
     final username = regUserCtrl.text.trim();
     final email = regEmailCtrl.text.trim();

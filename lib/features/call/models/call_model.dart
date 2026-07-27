@@ -38,8 +38,8 @@ class CallModel {
       callType: json['call_type']?.toString() ?? 'audio',
       status: json['status']?.toString() ?? 'initiated',
       durationSeconds: json['duration_seconds'] as int? ?? 0,
-      callerRtcToken: json['caller_rtc_token']?.toString(),
-      receiverRtcToken: json['receiver_rtc_token']?.toString(),
+      callerRtcToken: json['caller_rtc_token']?.toString() ?? json['rtc_token']?.toString(),
+      receiverRtcToken: json['receiver_rtc_token']?.toString() ?? json['rtc_token']?.toString(),
       agoraAppId: json['agora_app_id']?.toString(),
     );
   }

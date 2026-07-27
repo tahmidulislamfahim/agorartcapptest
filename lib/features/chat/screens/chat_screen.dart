@@ -13,9 +13,10 @@ class ChatScreen extends GetView<ChatController> {
   @override
   Widget build(BuildContext context) {
     final UserModel? target = Get.arguments as UserModel?;
-    if (target != null && controller.targetUser.value?.id != target.id) {
+    if (target != null) {
       controller.setTargetUser(target);
     }
+
 
     final authCtrl = Get.find<AuthController>();
     final currentUserId = authCtrl.currentUser.value?.id;

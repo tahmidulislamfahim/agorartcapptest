@@ -25,7 +25,10 @@ class UserListScreen extends GetView<UserListController> {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.notifications_outlined, color: AppColor.textMain),
+                  icon: const Icon(
+                    Icons.notifications_outlined,
+                    color: AppColor.textMain,
+                  ),
                   onPressed: () => Get.toNamed(AppRoutes.notificationScreen),
                 ),
                 if (count > 0)
@@ -38,7 +41,10 @@ class UserListScreen extends GetView<UserListController> {
                         color: AppColor.accentReject,
                         shape: BoxShape.circle,
                       ),
-                      constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
                       child: Text(
                         '$count',
                         textAlign: TextAlign.center,
@@ -65,7 +71,9 @@ class UserListScreen extends GetView<UserListController> {
         child: SafeArea(
           child: Obx(() {
             if (controller.isLoading.value && controller.users.isEmpty) {
-              return const Center(child: CircularProgressIndicator(color: AppColor.primary));
+              return const Center(
+                child: CircularProgressIndicator(color: AppColor.primary),
+              );
             }
 
             if (controller.users.isEmpty) {
@@ -73,7 +81,11 @@ class UserListScreen extends GetView<UserListController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.people_outline, size: 64, color: AppColor.textMuted),
+                    const Icon(
+                      Icons.people_outline,
+                      size: 64,
+                      color: AppColor.textMuted,
+                    ),
                     const SizedBox(height: 16),
                     const Text(
                       'No other users registered yet.',
@@ -81,9 +93,14 @@ class UserListScreen extends GetView<UserListController> {
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColor.primary),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.primary,
+                      ),
                       onPressed: () => controller.fetchUsers(),
-                      child: const Text('Refresh'),
+                      child: const Text(
+                        'Refresh',
+                        style: TextStyle(color: AppColor.textMain),
+                      ),
                     ),
                   ],
                 ),
@@ -101,15 +118,24 @@ class UserListScreen extends GetView<UserListController> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: AppStyle.glassDecoration(),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      child: ListTile(
+
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       leading: Stack(
                         children: [
                           CircleAvatar(
                             radius: 24,
                             backgroundColor: AppColor.primary.withOpacity(0.3),
                             child: Text(
-                              user.username.isNotEmpty ? user.username[0].toUpperCase() : 'U',
+                              user.username.isNotEmpty
+                                  ? user.username[0].toUpperCase()
+                                  : 'U',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -124,9 +150,14 @@ class UserListScreen extends GetView<UserListController> {
                               width: 12,
                               height: 12,
                               decoration: BoxDecoration(
-                                color: user.isOnline ? AppColor.onlineGreen : AppColor.offlineGrey,
+                                color: user.isOnline
+                                    ? AppColor.onlineGreen
+                                    : AppColor.offlineGrey,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColor.bgDark, width: 2),
+                                border: Border.all(
+                                  color: AppColor.bgDark,
+                                  width: 2,
+                                ),
                               ),
                             ),
                           ),
@@ -142,7 +173,10 @@ class UserListScreen extends GetView<UserListController> {
                       ),
                       subtitle: Text(
                         user.email,
-                        style: const TextStyle(color: AppColor.textMuted, fontSize: 13),
+                        style: const TextStyle(
+                          color: AppColor.textMuted,
+                          fontSize: 13,
+                        ),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -150,18 +184,26 @@ class UserListScreen extends GetView<UserListController> {
                           Text(
                             user.isOnline ? 'Online' : 'Offline',
                             style: TextStyle(
-                              color: user.isOnline ? AppColor.onlineGreen : AppColor.offlineGrey,
+                              color: user.isOnline
+                                  ? AppColor.onlineGreen
+                                  : AppColor.offlineGrey,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(Icons.chevron_right_rounded, color: AppColor.textMuted),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColor.textMuted,
+                          ),
                         ],
                       ),
-                      onTap: () => Get.toNamed(AppRoutes.chatScreen, arguments: user),
+                      onTap: () =>
+                          Get.toNamed(AppRoutes.chatScreen, arguments: user),
                     ),
-                  );
+                  ),
+                );
+
                 },
               ),
             );

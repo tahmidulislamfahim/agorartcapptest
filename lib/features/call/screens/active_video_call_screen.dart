@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agorartcapptest/core/constants/app_color.dart';
+import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
 import 'package:agorartcapptest/features/call/controllers/call_controller.dart';
 
 class ActiveVideoCallScreen extends GetView<CallController> {
@@ -16,18 +17,27 @@ class ActiveVideoCallScreen extends GetView<CallController> {
           children: [
             // 1. Remote Video View (Full Screen)
             Obx(() {
-              final remoteUid = controller.remoteUid.value;
               final engine = controller.rtcEngine;
               final call = controller.activeCall.value;
+              final myId = Get.find<AuthController>().currentUser.value?.id;
+              final fallbackRemoteId = call != null
+                  ? (call.callerId == myId ? call.receiverId : call.callerId)
+                  : null;
+              final remoteUid = controller.remoteUid.value ?? fallbackRemoteId;
 
-              if (remoteUid != null && engine != null && call != null) {
+              if (remoteUid != null && remoteUid > 0 && engine != null && call != null) {
                 return AgoraVideoView(
                   controller: VideoViewController.remote(
                     rtcEngine: engine,
-                    canvas: VideoCanvas(uid: remoteUid),
+                    canvas: VideoCanvas(
+                      uid: remoteUid,
+                      renderMode: RenderModeType.renderModeHidden,
+                    ),
                     connection: RtcConnection(channelId: call.channelName),
+                    useAndroidSurfaceView: true,
                   ),
                 );
+
               }
               return const Center(
                 child: Column(
@@ -73,7 +83,12 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                   child: AgoraVideoView(
                     controller: VideoViewController(
                       rtcEngine: engine,
-                      canvas: const VideoCanvas(uid: 0),
+                      canvas: const VideoCanvas(
+                        uid: 0,
+                        renderMode: RenderModeType.renderModeHidden,
+                        sourceType: VideoSourceType.videoSourceCamera,
+                      ),
+                      useAndroidSurfaceView: true,
                     ),
                   ),
                 );
@@ -98,38 +113,45 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                     children: [
                       // Mute Microphone
                       IconButton(
+                        onPressed: controller.toggleMute,
                         icon: Icon(
-                          controller.isMuted.value ? Icons.mic_off_rounded : Icons.mic_rounded,
+                          controller.isMuted.value ? Icons.mic_off : Icons.mic,
                           color: controller.isMuted.value ? AppColor.accentReject : Colors.white,
+                          size: 26,
                         ),
-                        onPressed: () => controller.toggleMute(),
                       ),
-
-                      // Switch Camera (Front / Back)
+                      // Switch Front / Rear Camera
                       IconButton(
-                        icon: const Icon(Icons.cameraswitch_rounded, color: Colors.white),
-                        onPressed: () => controller.switchCamera(),
+                        onPressed: controller.switchCamera,
+                        icon: const Icon(
+                          Icons.cameraswitch_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
                       ),
-
-                      // Toggle Local Video
+                      // Toggle Video On / Off
                       IconButton(
+                        onPressed: controller.toggleVideo,
                         icon: Icon(
-                          controller.isVideoDisabled.value ? Icons.videocam_off_rounded : Icons.videocam_rounded,
+                          controller.isVideoDisabled.value ? Icons.videocam_off : Icons.videocam,
                           color: controller.isVideoDisabled.value ? AppColor.accentReject : Colors.white,
+                          size: 26,
                         ),
-                        onPressed: () => controller.toggleCamera(),
                       ),
-
                       // End Call Button
-                      GestureDetector(
-                        onTap: () => controller.endCall(),
+                      InkWell(
+                        onTap: controller.endCall,
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: const BoxDecoration(
                             color: AppColor.accentReject,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 28),
+                          child: const Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                            size: 28,
+                          ),
                         ),
                       ),
                     ],
