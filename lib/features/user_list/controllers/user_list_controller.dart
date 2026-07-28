@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:get/get.dart';
 import 'package:agorartcapptest/core/services/local_service/shared_preferences_helper.dart';
 import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
@@ -12,18 +11,10 @@ class UserListController extends GetxController {
   final RxList<UserModel> users = <UserModel>[].obs;
   final RxBool isLoading = false.obs;
 
-  Timer? _timer;
-
   @override
   void onInit() {
     super.onInit();
     fetchUsers();
-  }
-
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
   }
 
   Future<void> fetchUsers({bool showLoading = true}) async {

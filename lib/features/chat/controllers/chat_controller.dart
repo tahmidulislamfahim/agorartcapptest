@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:agorartcapptest/core/services/rtm_service/rtm_service.dart';
+import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
 import 'package:agorartcapptest/features/auth/models/user_model.dart';
 import 'package:agorartcapptest/features/chat/models/chat_message_model.dart';
 import 'package:agorartcapptest/features/chat/service/chat_service.dart';
@@ -15,23 +17,9 @@ class ChatController extends GetxController {
   final RxBool isLoading = false.obs;
   final TextEditingController messageCtrl = TextEditingController();
 
-  Timer? _pollingTimer;
-
   void setTargetUser(UserModel user) {
     targetUser.value = user;
     fetchMessages();
-    _startPolling();
-  }
-
-  @override
-  void onClose() {
-    _pollingTimer?.cancel();
-    super.onClose();
-  }
-
-  void _startPolling() {
-    _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 3), (_) => fetchMessages(showLoading: false));
   }
 
   Future<void> fetchMessages({bool showLoading = true}) async {
@@ -51,10 +39,24 @@ class ChatController extends GetxController {
     final text = messageCtrl.text.trim();
     if (text.isEmpty || targetUser.value == null) return;
 
+    final receiverId = targetUser.value!.id;
+    final myId = Get.find<AuthController>().currentUser.value?.id ?? 0;
+
     try {
       messageCtrl.clear();
-      await _chatService.sendMessage(targetUser.value!.id, text);
+      await _chatService.sendMessage(receiverId, text);
       fetchMessages(showLoading: false);
+
+      if (Get.isRegistered<RtmService>()) {
+        Get.find<RtmService>().sendPeerMessage(
+          peerUserId: receiverId.toString(),
+          payload: {
+            'type': 'chat_message',
+            'sender_id': myId,
+            'message': text,
+          },
+        );
+      }
     } catch (e) {
       Get.snackbar('Error', 'Failed to send message', snackPosition: SnackPosition.BOTTOM);
     }

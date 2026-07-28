@@ -13,19 +13,12 @@ class NotificationController extends GetxController {
 
   final RxList<NotificationModel> notifications = <NotificationModel>[].obs;
   final RxBool isLoading = false.obs;
-
-  Timer? _timer;
   int _lastHandledCallId = 0;
 
   @override
   void onInit() {
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
+    fetchNotifications(showLoading: false);
   }
 
   int get unreadCount => notifications.where((n) => !n.isRead).length;
