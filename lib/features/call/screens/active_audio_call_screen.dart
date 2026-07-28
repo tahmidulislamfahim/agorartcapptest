@@ -17,11 +17,16 @@ class ActiveAudioCallScreen extends GetView<CallController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: AppStyle.bgGradientDecoration,
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
               Column(
                 children: [
                   Obx(
@@ -156,6 +161,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
