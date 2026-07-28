@@ -29,7 +29,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundColor: AppColor.primary.withOpacity(0.3),
+                        backgroundColor: AppColor.primary.withValues(alpha: 0.3),
                         child: Text(
                           user != null && user.username.isNotEmpty
                               ? user.username[0].toUpperCase()
@@ -62,9 +62,9 @@ class ProfileScreen extends GetView<ProfileController> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppColor.onlineGreen.withOpacity(0.2),
+                          color: AppColor.onlineGreen.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColor.onlineGreen.withOpacity(0.4)),
+                          border: Border.all(color: AppColor.onlineGreen.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

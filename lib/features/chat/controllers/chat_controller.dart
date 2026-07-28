@@ -29,7 +29,7 @@ class ChatController extends GetxController {
       final history = await _chatService.getChatHistory(targetUser.value!.id);
       messages.assignAll(history);
     } catch (e) {
-      print('Fetch chat history error: $e');
+      debugPrint('Fetch chat history error: $e');
     } finally {
       if (showLoading) isLoading.value = false;
     }

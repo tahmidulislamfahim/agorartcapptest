@@ -55,10 +55,10 @@ class NotificationScreen extends GetView<NotificationController> {
                   decoration: AppStyle.glassDecoration(
                     borderColor: notif.isRead
                         ? AppColor.cardBorder
-                        : AppColor.primary.withOpacity(0.5),
+                        : AppColor.primary.withValues(alpha: 0.5),
                     bgColor: notif.isRead
                         ? AppColor.cardBg
-                        : AppColor.primary.withOpacity(0.1),
+                        : AppColor.primary.withValues(alpha: 0.1),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +66,8 @@ class NotificationScreen extends GetView<NotificationController> {
                       CircleAvatar(
                         radius: 20,
                         backgroundColor: isCallNotif
-                            ? AppColor.accentCall.withOpacity(0.2)
-                            : AppColor.secondary.withOpacity(0.2),
+                            ? AppColor.accentCall.withValues(alpha: 0.2)
+                            : AppColor.secondary.withValues(alpha: 0.2),
                         child: Icon(
                           isCallNotif ? Icons.call : Icons.message,
                           color: isCallNotif

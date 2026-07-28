@@ -78,9 +78,9 @@ class ChatScreen extends GetView<ChatController> {
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppColor.secondary.withOpacity(0.15),
+                            color: AppColor.secondary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColor.secondary.withOpacity(0.3)),
+                            border: Border.all(color: AppColor.secondary.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             msg.message,

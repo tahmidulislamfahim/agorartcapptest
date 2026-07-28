@@ -186,7 +186,7 @@ class CallController extends GetxController {
           : (call.callerRtcToken ?? '');
     }
 
-    _addLog('  Backend Token (len ${selectedToken.length}): ${selectedToken.isEmpty ? "EMPTY!" : selectedToken.substring(0, 25) + "..."}');
+    _addLog('  Backend Token (len ${selectedToken.length}): ${selectedToken.isEmpty ? "EMPTY!" : "${selectedToken.substring(0, 25)}..."}');
     return selectedToken;
   }
 
@@ -341,7 +341,7 @@ class CallController extends GetxController {
       agoraLog.clear();
       connectionStatus.value = 'Initializing...';
       _addLog('AppId=${agoraAppId.substring(0, 8)}... Channel=$channelName UID=$uid');
-      _addLog('Token=${token.isEmpty ? "EMPTY!" : token.substring(0, 20) + "..."}');
+      _addLog('Token=${token.isEmpty ? "EMPTY!" : "${token.substring(0, 20)}..."}');
 
       if (token.isEmpty) {
         _addLog('ERROR: Token is empty! Agora will reject the connection.');
