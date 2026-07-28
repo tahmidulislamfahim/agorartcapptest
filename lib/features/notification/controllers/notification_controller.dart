@@ -20,9 +20,6 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchNotifications();
-    // Poll notifications every 3 seconds to listen for incoming calls and messages
-    _timer = Timer.periodic(const Duration(seconds: 3), (_) => fetchNotifications(showLoading: false));
   }
 
   @override

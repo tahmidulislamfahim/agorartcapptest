@@ -30,7 +30,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColor.white,
                       ),
                     ),
                   ),
@@ -50,7 +50,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                   Obx(() => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.black45,
+                      color: AppColor.black45,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -79,7 +79,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                 child: const CircleAvatar(
                   radius: 54,
                   backgroundColor: AppColor.primary,
-                  child: Icon(Icons.mic_rounded, size: 54, color: Colors.white),
+                  child: Icon(Icons.mic_rounded, size: 54, color: AppColor.white),
                 ),
               ),
 
@@ -93,7 +93,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                       iconSize: 32,
                       icon: Icon(
                         controller.isMuted.value ? Icons.mic_off_rounded : Icons.mic_rounded,
-                        color: controller.isMuted.value ? AppColor.accentReject : Colors.white,
+                        color: controller.isMuted.value ? AppColor.accentReject : AppColor.white,
                       ),
                       onPressed: () => controller.toggleMute(),
                     ),
@@ -107,7 +107,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                           color: AppColor.accentReject,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 32),
+                        child: const Icon(Icons.call_end_rounded, color: AppColor.white, size: 32),
                       ),
                     ),
 
@@ -116,7 +116,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                       iconSize: 32,
                       icon: Icon(
                         controller.isSpeakerOn.value ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-                        color: controller.isSpeakerOn.value ? AppColor.secondary : Colors.white,
+                        color: controller.isSpeakerOn.value ? AppColor.secondary : AppColor.white,
                       ),
                       onPressed: () => controller.toggleSpeaker(),
                     ),
@@ -132,7 +132,7 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: AppColor.black54,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: ListView.builder(
@@ -142,10 +142,10 @@ class ActiveAudioCallScreen extends GetView<CallController> {
                       style: TextStyle(
                         fontSize: 10,
                         color: logs[i].contains('ERROR') || logs[i].contains('EXCEPTION')
-                            ? Colors.redAccent
+                            ? AppColor.redAccent
                             : logs[i].contains('✅')
-                                ? Colors.greenAccent
-                                : Colors.white70,
+                                ? AppColor.greenAccent
+                                : AppColor.white70,
                         fontFamily: 'monospace',
                       ),
                     ),

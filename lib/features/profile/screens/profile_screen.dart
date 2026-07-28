@@ -37,7 +37,7 @@ class ProfileScreen extends GetView<ProfileController> {
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColor.white,
                           ),
                         ),
                       ),
@@ -47,7 +47,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColor.white,
                         ),
                       ),
                       const SizedBox(height: 4),

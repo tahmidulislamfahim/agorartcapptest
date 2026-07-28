@@ -49,7 +49,7 @@ class UserListScreen extends GetView<UserListController> {
                         '$count',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColor.white,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -108,7 +108,7 @@ class UserListScreen extends GetView<UserListController> {
             }
 
             return RefreshIndicator(
-              onRefresh: () => controller.fetchUsers(),
+              onRefresh: () => controller.fetchUsers(showLoading: false),
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: controller.users.length,
@@ -119,91 +119,89 @@ class UserListScreen extends GetView<UserListController> {
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: AppStyle.glassDecoration(),
                     child: Material(
-                      color: Colors.transparent,
+                      color: AppColor.transparent,
                       borderRadius: BorderRadius.circular(16),
                       child: ListTile(
-
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      leading: Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: AppColor.primary.withOpacity(0.3),
-                            child: Text(
-                              user.username.isNotEmpty
-                                  ? user.username[0].toUpperCase()
-                                  : 'U',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: user.isOnline
-                                    ? AppColor.onlineGreen
-                                    : AppColor.offlineGrey,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColor.bgDark,
-                                  width: 2,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        leading: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: AppColor.primary.withOpacity(0.3),
+                              child: Text(
+                                user.username.isNotEmpty
+                                    ? user.username[0].toUpperCase()
+                                    : 'U',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.white,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      title: Text(
-                        user.username,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      subtitle: Text(
-                        user.email,
-                        style: const TextStyle(
-                          color: AppColor.textMuted,
-                          fontSize: 13,
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            user.isOnline ? 'Online' : 'Offline',
-                            style: TextStyle(
-                              color: user.isOnline
-                                  ? AppColor.onlineGreen
-                                  : AppColor.offlineGrey,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: user.isOnline
+                                      ? AppColor.onlineGreen
+                                      : AppColor.offlineGrey,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColor.bgDark,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
                             ),
+                          ],
+                        ),
+                        title: Text(
+                          user.username,
+                          style: const TextStyle(
+                            color: AppColor.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.chevron_right_rounded,
+                        ),
+                        subtitle: Text(
+                          user.email,
+                          style: const TextStyle(
                             color: AppColor.textMuted,
+                            fontSize: 13,
                           ),
-                        ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              user.isOnline ? 'Online' : 'Offline',
+                              style: TextStyle(
+                                color: user.isOnline
+                                    ? AppColor.onlineGreen
+                                    : AppColor.offlineGrey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              color: AppColor.textMuted,
+                            ),
+                          ],
+                        ),
+                        onTap: () =>
+                            Get.toNamed(AppRoutes.chatScreen, arguments: user),
                       ),
-                      onTap: () =>
-                          Get.toNamed(AppRoutes.chatScreen, arguments: user),
                     ),
-                  ),
-                );
-
+                  );
                 },
               ),
             );

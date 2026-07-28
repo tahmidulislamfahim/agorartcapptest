@@ -41,7 +41,7 @@ class SplashScreen extends GetView<SplashController> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColor.white,
                   letterSpacing: 1.1,
                 ),
               ),

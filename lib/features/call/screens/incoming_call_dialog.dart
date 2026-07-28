@@ -15,12 +15,12 @@ class IncomingCallDialog extends StatelessWidget {
     final controller = Get.find<CallController>();
 
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.transparent,
       insetPadding: const EdgeInsets.all(20),
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: AppStyle.glassDecoration(
-          bgColor: AppColor.bgDark.withOpacity(0.95),
+          bgColor: AppColor.bgDark,
           borderColor: AppColor.primary,
         ),
         child: Column(
@@ -30,7 +30,7 @@ class IncomingCallDialog extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Incoming ${callData.callType.toUpperCase()} Call',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColor.white),
             ),
             const SizedBox(height: 8),
             Text(
@@ -55,7 +55,7 @@ class IncomingCallDialog extends StatelessWidget {
                           color: AppColor.accentReject,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 28),
+                        child: const Icon(Icons.call_end_rounded, color: AppColor.white, size: 28),
                       ),
                       const SizedBox(height: 6),
                       const Text('Decline', style: TextStyle(color: AppColor.textMuted, fontSize: 12)),
@@ -77,7 +77,7 @@ class IncomingCallDialog extends StatelessWidget {
                           color: AppColor.accentCall,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.call_rounded, color: Colors.white, size: 28),
+                        child: const Icon(Icons.call_rounded, color: AppColor.white, size: 28),
                       ),
                       const SizedBox(height: 6),
                       const Text('Accept', style: TextStyle(color: AppColor.textMuted, fontSize: 12)),

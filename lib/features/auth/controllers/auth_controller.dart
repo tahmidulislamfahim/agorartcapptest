@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:agorartcapptest/core/api_endpoint/api_endpoint.dart';
 import 'package:agorartcapptest/core/services/local_service/shared_preferences_helper.dart';
+import 'package:agorartcapptest/core/services/rtm_service/rtm_service.dart';
 import 'package:agorartcapptest/features/auth/models/user_model.dart';
 import 'package:agorartcapptest/features/auth/service/auth_service.dart';
 import 'package:agorartcapptest/routes/app_routes.dart';
@@ -91,6 +93,15 @@ class AuthController extends GetxController {
       currentUser.value = user;
       await SharedPreferencesHelper.saveUser(user.toJson());
 
+      // Initialize Agora RTM Realtime Messaging Client
+      if (user.id > 0 && Get.isRegistered<RtmService>()) {
+        Get.find<RtmService>().initAndLogin(
+          appId: ApiEndpoint.agoraAppId,
+          userId: user.id.toString(),
+          token: '',
+        );
+      }
+
       isLoading.value = false;
 
       loginUserCtrl.clear();
@@ -104,6 +115,9 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
+    if (Get.isRegistered<RtmService>()) {
+      await Get.find<RtmService>().logout();
+    }
     await SharedPreferencesHelper.clearAll();
     currentUser.value = null;
     Get.offAllNamed(AppRoutes.loginScreen);

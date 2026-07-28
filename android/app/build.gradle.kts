@@ -32,6 +32,13 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    packaging {
+        jniLibs {
+            pickFirsts.add("**/libaosl.so")
+            pickFirsts.add("**/libagora*.so")
+        }
+    }
 }
 
 flutter {

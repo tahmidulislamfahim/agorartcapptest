@@ -18,8 +18,6 @@ class UserListController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUsers();
-    // Refresh user online status every 10 seconds
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) => fetchUsers(showLoading: false));
   }
 
   @override

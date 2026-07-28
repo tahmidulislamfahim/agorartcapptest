@@ -26,7 +26,7 @@ class OutgoingCallScreen extends GetView<CallController> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColor.white,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -63,7 +63,7 @@ class OutgoingCallScreen extends GetView<CallController> {
                           target != null && target.username.isNotEmpty
                               ? target.username[0].toUpperCase()
                               : 'U',
-                          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColor.white),
                         ),
                       ),
                     ),
@@ -82,10 +82,10 @@ class OutgoingCallScreen extends GetView<CallController> {
                         color: AppColor.accentReject,
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(color: Colors.redAccent, blurRadius: 16, spreadRadius: 2),
+                          BoxShadow(color: AppColor.redAccent, blurRadius: 16, spreadRadius: 2),
                         ],
                       ),
-                      child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 36),
+                      child: const Icon(Icons.call_end_rounded, color: AppColor.white, size: 36),
                     ),
                   ),
                   const SizedBox(height: 12),

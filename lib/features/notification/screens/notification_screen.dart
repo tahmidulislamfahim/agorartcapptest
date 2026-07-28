@@ -10,6 +10,10 @@ class NotificationScreen extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchNotifications();
+    });
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Notifications',
@@ -86,7 +90,7 @@ class NotificationScreen extends GetView<NotificationController> {
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColor.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),

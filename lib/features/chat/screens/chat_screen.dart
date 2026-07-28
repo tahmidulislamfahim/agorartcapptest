@@ -117,7 +117,7 @@ class ChatScreen extends GetView<ChatController> {
                           child: Text(
                             msg.message,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColor.white,
                               fontSize: 14,
                               height: 1.3,
                             ),
@@ -141,14 +141,14 @@ class ChatScreen extends GetView<ChatController> {
                     Expanded(
                       child: TextField(
                         controller: controller.messageCtrl,
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        style: const TextStyle(color: AppColor.white, fontSize: 14),
                         onSubmitted: (_) => controller.sendMessage(),
                         decoration: InputDecoration(
                           hintText: 'Type your message...',
                           hintStyle: const TextStyle(color: AppColor.textMuted, fontSize: 14),
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Colors.black.withOpacity(0.3),
+                          fillColor: AppColor.inputFill,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
@@ -166,7 +166,7 @@ class ChatScreen extends GetView<ChatController> {
                       radius: 24,
                       backgroundColor: AppColor.primary,
                       child: IconButton(
-                        icon: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                        icon: const Icon(Icons.send_rounded, color: AppColor.white, size: 20),
                         onPressed: () => controller.sendMessage(),
                       ),
                     ),

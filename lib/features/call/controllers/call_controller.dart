@@ -5,6 +5,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agorartcapptest/core/api_endpoint/api_endpoint.dart';
 import 'package:agorartcapptest/core/services/local_service/shared_preferences_helper.dart';
+import 'package:agorartcapptest/core/constants/app_color.dart';
+import 'package:agorartcapptest/core/services/rtm_service/rtm_service.dart';
 import 'package:agorartcapptest/routes/app_routes.dart';
 import 'package:agorartcapptest/features/auth/controllers/auth_controller.dart';
 import 'package:agorartcapptest/features/auth/models/user_model.dart';
@@ -103,6 +105,24 @@ class CallController extends GetxController {
       final callModel = await _callService.initiateCall(receiverId, callType);
       activeCall.value = callModel;
 
+      // Send Instant Real-time Call Signaling via Agora RTM
+      if (Get.isRegistered<RtmService>()) {
+        Get.find<RtmService>().sendPeerMessage(
+          peerUserId: receiverId.toString(),
+          payload: {
+            'type': 'call_offer',
+            'call_id': callModel.id,
+            'caller_id': callModel.callerId,
+            'caller_username': callModel.callerUsername,
+            'receiver_id': callModel.receiverId,
+            'channel_name': callModel.channelName,
+            'call_type': callModel.callType,
+            'rtc_token': callModel.receiverRtcToken,
+            'agora_app_id': callModel.agoraAppId ?? ApiEndpoint.agoraAppId,
+          },
+        );
+      }
+
       // Navigate to Outgoing Call Screen
       Get.toNamed(AppRoutes.outgoingCallScreen);
 
@@ -191,6 +211,17 @@ class CallController extends GetxController {
       final mergedCall = _mergeTokens(updatedCall, callData);
       activeCall.value = mergedCall;
 
+      // Notify Caller via Agora RTM
+      if (Get.isRegistered<RtmService>()) {
+        Get.find<RtmService>().sendPeerMessage(
+          peerUserId: callData.callerId.toString(),
+          payload: {
+            'type': 'call_accepted',
+            'call_id': callData.id,
+          },
+        );
+      }
+
       final myId = await _getMyUserId();
       final token = _getRtcToken(mergedCall, myId);
       _addLog('Receiver (UID $myId) joining channel ${mergedCall.channelName}');
@@ -219,6 +250,26 @@ class CallController extends GetxController {
         'Call Error',
         e.toString().replaceAll('Exception: ', ''),
         snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void onRemoteAcceptedCall() {
+    if (activeCall.value != null) {
+      final oldCall = activeCall.value!;
+      activeCall.value = CallModel(
+        id: oldCall.id,
+        callerId: oldCall.callerId,
+        callerUsername: oldCall.callerUsername,
+        receiverId: oldCall.receiverId,
+        receiverUsername: oldCall.receiverUsername,
+        channelName: oldCall.channelName,
+        callType: oldCall.callType,
+        status: 'accepted',
+        durationSeconds: oldCall.durationSeconds,
+        callerRtcToken: oldCall.callerRtcToken,
+        receiverRtcToken: oldCall.receiverRtcToken,
+        agoraAppId: oldCall.agoraAppId,
       );
     }
   }
@@ -373,7 +424,7 @@ class CallController extends GetxController {
             '$err: $msg',
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 6),
-            backgroundColor: const Color(0xFFEF4444),
+            backgroundColor: AppColor.errorRed,
           );
         },
         onConnectionStateChanged: (RtcConnection connection, ConnectionStateType state, ConnectionChangedReasonType reason) {
@@ -506,10 +557,6 @@ class CallController extends GetxController {
   void toggleCamera() {
     isVideoDisabled.value = !isVideoDisabled.value;
     rtcEngine?.muteLocalVideoStream(isVideoDisabled.value);
-  }
-
-  void toggleVideo() {
-    toggleCamera();
   }
 
   void switchCamera() {

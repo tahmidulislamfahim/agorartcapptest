@@ -11,7 +11,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColor.black,
       body: SafeArea(
         child: Stack(
           children: [
@@ -47,7 +47,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                     const SizedBox(height: 16),
                     Obx(() => Text(
                       controller.connectionStatus.value,
-                      style: const TextStyle(color: Colors.white70, fontSize: 14),
+                      style: const TextStyle(color: AppColor.white70, fontSize: 14),
                       textAlign: TextAlign.center,
                     )),
                   ],
@@ -67,7 +67,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                   height: 80,
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: AppColor.darkOverlay,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: ListView.builder(
@@ -77,10 +77,10 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                       style: TextStyle(
                         fontSize: 9,
                         color: logs[i].contains('ERROR') || logs[i].contains('EXCEPTION')
-                            ? Colors.redAccent
+                            ? AppColor.redAccent
                             : logs[i].contains('✅')
-                                ? Colors.greenAccent
-                                : Colors.white70,
+                                ? AppColor.greenAccent
+                                : AppColor.white70,
                         fontFamily: 'monospace',
                       ),
                     ),
@@ -100,11 +100,11 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                     width: 110,
                     height: 150,
                     decoration: BoxDecoration(
-                      color: Colors.grey[900],
+                      color: AppColor.darkGrey,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColor.cardBorder),
                     ),
-                    child: const Icon(Icons.videocam_off, color: Colors.white54, size: 32),
+                    child: const Icon(Icons.videocam_off, color: AppColor.white54, size: 32),
                   );
                 }
                 return Container(
@@ -138,7 +138,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
+                  color: AppColor.darkOverlay,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColor.cardBorder),
                 ),
@@ -151,7 +151,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                         onPressed: controller.toggleMute,
                         icon: Icon(
                           controller.isMuted.value ? Icons.mic_off : Icons.mic,
-                          color: controller.isMuted.value ? AppColor.accentReject : Colors.white,
+                          color: controller.isMuted.value ? AppColor.accentReject : AppColor.white,
                           size: 26,
                         ),
                       ),
@@ -160,16 +160,16 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                         onPressed: controller.switchCamera,
                         icon: const Icon(
                           Icons.cameraswitch_rounded,
-                          color: Colors.white,
+                          color: AppColor.white,
                           size: 26,
                         ),
                       ),
                       // Toggle Video On / Off
                       IconButton(
-                        onPressed: controller.toggleVideo,
+                        onPressed: controller.toggleCamera,
                         icon: Icon(
                           controller.isVideoDisabled.value ? Icons.videocam_off : Icons.videocam,
-                          color: controller.isVideoDisabled.value ? AppColor.accentReject : Colors.white,
+                          color: controller.isVideoDisabled.value ? AppColor.accentReject : AppColor.white,
                           size: 26,
                         ),
                       ),
@@ -184,7 +184,7 @@ class ActiveVideoCallScreen extends GetView<CallController> {
                           ),
                           child: const Icon(
                             Icons.call_end,
-                            color: Colors.white,
+                            color: AppColor.white,
                             size: 28,
                           ),
                         ),

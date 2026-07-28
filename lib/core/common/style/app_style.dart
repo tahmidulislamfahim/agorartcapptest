@@ -13,7 +13,7 @@ class AppStyle {
       border: Border.all(color: borderColor, width: 1.0),
       boxShadow: const [
         BoxShadow(
-          color: Colors.black26,
+          color: AppColor.shadowBlack,
           blurRadius: 10,
           offset: Offset(0, 4),
         ),
