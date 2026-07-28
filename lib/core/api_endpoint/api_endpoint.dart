@@ -1,8 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiEndpoint {
-  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'https://agotartctestserver.onrender.com/api/v1';
-  static String get agoraAppId => dotenv.env['AGORA_APP_ID'] ?? '5d14aebdcf754f92a51247ee5f0bfed0';
+  static String get baseUrl => 'https://agotartctestserver.onrender.com/api/v1';
+  static String get agoraAppId => dotenv.env['AGORA_APP_ID']!;
 
   // Auth Endpoints
   static String get register => '$baseUrl/auth/register';
@@ -14,7 +14,8 @@ class ApiEndpoint {
 
   // Chat Endpoints
   static String get sendChatMessage => '$baseUrl/chat/send';
-  static String chatHistory(int otherUserId) => '$baseUrl/chat/history/$otherUserId';
+  static String chatHistory(int otherUserId) =>
+      '$baseUrl/chat/history/$otherUserId';
 
   // Call Endpoints
   static String get initiateCall => '$baseUrl/calls/initiate';
@@ -23,7 +24,8 @@ class ApiEndpoint {
 
   // Notifications Endpoints
   static String get getNotifications => '$baseUrl/notifications';
-  static String markNotificationRead(int id) => '$baseUrl/notifications/$id/read';
+  static String markNotificationRead(int id) =>
+      '$baseUrl/notifications/$id/read';
 
   // Agora Standalone Tokens
   static String get getRtcToken => '$baseUrl/agora/rtc-token';
