@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:agorartcapptest/core/api_endpoint/api_endpoint.dart';
 import 'package:agorartcapptest/core/services/local_service/shared_preferences_helper.dart';
 import 'package:agorartcapptest/core/services/rtm_service/rtm_service.dart';
 import 'package:agorartcapptest/features/auth/models/user_model.dart';
 import 'package:agorartcapptest/features/auth/service/auth_service.dart';
+import 'package:agorartcapptest/features/notification/controllers/notification_controller.dart';
 import 'package:agorartcapptest/routes/app_routes.dart';
 
 class AuthController extends GetxController {
@@ -38,6 +38,12 @@ class AuthController extends GetxController {
       final user = await _authService.getMe();
       currentUser.value = user;
       await SharedPreferencesHelper.saveUser(user.toJson());
+      if (user.id > 0 && Get.isRegistered<RtmService>()) {
+        Get.find<RtmService>().initAndLoginUser(user.id.toString());
+      }
+      if (Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().fetchNotifications(showLoading: false);
+      }
       return user;
     } catch (_) {
       return null;
@@ -95,11 +101,10 @@ class AuthController extends GetxController {
 
       // Initialize Agora RTM Realtime Messaging Client
       if (user.id > 0 && Get.isRegistered<RtmService>()) {
-        Get.find<RtmService>().initAndLogin(
-          appId: ApiEndpoint.agoraAppId,
-          userId: user.id.toString(),
-          token: '',
-        );
+        Get.find<RtmService>().initAndLoginUser(user.id.toString());
+      }
+      if (Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().fetchNotifications(showLoading: false);
       }
 
       isLoading.value = false;

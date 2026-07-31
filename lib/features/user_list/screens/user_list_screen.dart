@@ -130,7 +130,9 @@ class UserListScreen extends GetView<UserListController> {
                           children: [
                             CircleAvatar(
                               radius: 24,
-                              backgroundColor: AppColor.primary.withOpacity(0.3),
+                              backgroundColor: AppColor.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               child: Text(
                                 user.username.isNotEmpty
                                     ? user.username[0].toUpperCase()

@@ -61,11 +61,7 @@ class CallController extends GetxController {
   final RxBool isVideoDisabled = false.obs;
   final RxBool isFrontCamera = true.obs;
   final RxBool isSpeakerOn = true.obs;
-  final RxInt callDurationSeconds = 0.obs;
-
-  Timer? _statusPollTimer;
-  Timer? _activeCallStatusTimer;
-  Timer? _durationTimer;
+  final RxInt callDurationSeconds = 0.obs;  Timer? _durationTimer;
 
   @override
   void onClose() {
@@ -125,9 +121,6 @@ class CallController extends GetxController {
 
       // Navigate to Outgoing Call Screen
       Get.toNamed(AppRoutes.outgoingCallScreen);
-
-      // Poll call status to check when receiver accepts or declines
-      _startStatusPolling();
     } catch (e) {
       Get.snackbar(
         'Call Error',
@@ -193,7 +186,7 @@ class CallController extends GetxController {
           : (call.callerRtcToken ?? '');
     }
 
-    _addLog('  Backend Token (len ${selectedToken.length}): ${selectedToken.isEmpty ? "EMPTY!" : selectedToken.substring(0, 25) + "..."}');
+    _addLog('  Backend Token (len ${selectedToken.length}): ${selectedToken.isEmpty ? "EMPTY!" : "${selectedToken.substring(0, 25)}..."}');
     return selectedToken;
   }
 
@@ -226,9 +219,6 @@ class CallController extends GetxController {
       final token = _getRtcToken(mergedCall, myId);
       _addLog('Receiver (UID $myId) joining channel ${mergedCall.channelName}');
 
-      // Start active call polling immediately so call termination is caught live
-      _startActiveCallStatusPolling();
-
       // Setup Agora RTC Engine and Join Channel
       await _joinAgoraChannel(
         agoraAppId: mergedCall.agoraAppId ?? ApiEndpoint.agoraAppId,
@@ -254,10 +244,10 @@ class CallController extends GetxController {
     }
   }
 
-  void onRemoteAcceptedCall() {
-    if (activeCall.value != null) {
+  Future<void> onRemoteAcceptedCall() async {
+    if (activeCall.value != null && activeCall.value!.status != 'accepted') {
       final oldCall = activeCall.value!;
-      activeCall.value = CallModel(
+      final mergedCall = CallModel(
         id: oldCall.id,
         callerId: oldCall.callerId,
         callerUsername: oldCall.callerUsername,
@@ -271,15 +261,44 @@ class CallController extends GetxController {
         receiverRtcToken: oldCall.receiverRtcToken,
         agoraAppId: oldCall.agoraAppId,
       );
+      activeCall.value = mergedCall;
+
+      final myId = await _getMyUserId();
+      final token = _getRtcToken(mergedCall, myId);
+      _addLog('Caller (UID $myId) joining channel ${mergedCall.channelName}');
+
+      // Connect Caller to Agora RTC channel
+      await _joinAgoraChannel(
+        agoraAppId: mergedCall.agoraAppId ?? ApiEndpoint.agoraAppId,
+        channelName: mergedCall.channelName,
+        token: token,
+        uid: myId,
+        callType: mergedCall.callType,
+      );
+
+      if (mergedCall.callType == 'video') {
+        Get.offNamed(AppRoutes.activeVideoCallScreen);
+      } else {
+        Get.offNamed(AppRoutes.activeAudioCallScreen);
+      }
     }
   }
 
   // 3. Reject Call
   Future<void> rejectCall(int callId) async {
     try {
+      final currentCall = activeCall.value;
+      if (currentCall != null && Get.isRegistered<RtmService>()) {
+        final myId = await _getMyUserId();
+        final partnerId = currentCall.callerId == myId
+            ? currentCall.receiverId
+            : currentCall.callerId;
+        Get.find<RtmService>().sendPeerMessage(
+          peerUserId: partnerId.toString(),
+          payload: {'type': 'call_rejected', 'call_id': callId},
+        );
+      }
       await _callService.updateCallStatus(callId, 'rejected');
-      _stopStatusPolling();
-      _stopActiveCallStatusPolling();
       activeCall.value = null;
       _leaveAgoraChannel();
     } catch (_) {}
@@ -290,6 +309,16 @@ class CallController extends GetxController {
     final currentCall = activeCall.value;
     if (currentCall != null) {
       debugPrint('Ending call ID ${currentCall.id} on backend...');
+      if (Get.isRegistered<RtmService>()) {
+        final myId = await _getMyUserId();
+        final partnerId = currentCall.callerId == myId
+            ? currentCall.receiverId
+            : currentCall.callerId;
+        Get.find<RtmService>().sendPeerMessage(
+          peerUserId: partnerId.toString(),
+          payload: {'type': 'call_ended', 'call_id': currentCall.id},
+        );
+      }
       _callService.updateCallStatus(currentCall.id, 'ended').then((_) {
         debugPrint('Call ID ${currentCall.id} successfully updated to ended on backend.');
       }).catchError((e) {
@@ -298,83 +327,6 @@ class CallController extends GetxController {
 
     }
     await _leaveAgoraChannel();
-  }
-
-
-
-  // Poll call status on caller side to detect when receiver accepts/rejects
-  void _startStatusPolling() {
-    _statusPollTimer?.cancel();
-    _statusPollTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
-      if (activeCall.value == null) return;
-      try {
-        final history = await _callService.getCallHistory();
-        final current = history.firstWhereOrNull((c) => c.id == activeCall.value!.id);
-        if (current == null) return;
-
-        if (current.status == 'accepted' && activeCall.value!.status == 'initiated') {
-          final mergedCall = _mergeTokens(current, activeCall.value);
-          activeCall.value = mergedCall;
-          _stopStatusPolling();
-          _startActiveCallStatusPolling();
-
-          final myId = await _getMyUserId();
-          final token = _getRtcToken(mergedCall, myId);
-          _addLog('Caller (UID $myId) joining channel ${mergedCall.channelName}');
-
-          // Connect Caller to Agora RTC channel
-          await _joinAgoraChannel(
-            agoraAppId: mergedCall.agoraAppId ?? ApiEndpoint.agoraAppId,
-            channelName: mergedCall.channelName,
-            token: token,
-            uid: myId,
-            callType: mergedCall.callType,
-          );
-
-          if (mergedCall.callType == 'video') {
-            Get.offNamed(AppRoutes.activeVideoCallScreen);
-          } else {
-            Get.offNamed(AppRoutes.activeAudioCallScreen);
-          }
-        } else if (['rejected', 'missed', 'ended'].contains(current.status.toLowerCase())) {
-          _stopStatusPolling();
-          activeCall.value = null;
-          Get.snackbar('Call Update', 'Call ${current.status}', snackPosition: SnackPosition.BOTTOM);
-          _leaveAgoraChannel();
-        }
-      } catch (e) {
-        debugPrint('Status poll error: $e');
-      }
-    });
-  }
-
-
-  // Poll call status during active call to ensure device sync when either user ends call
-  void _startActiveCallStatusPolling() {
-    _activeCallStatusTimer?.cancel();
-    _activeCallStatusTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
-      if (activeCall.value == null) return;
-      try {
-        final history = await _callService.getCallHistory();
-        final current = history.firstWhereOrNull((c) => c.id == activeCall.value!.id);
-        if (current != null && ['ended', 'rejected', 'missed'].contains(current.status.toLowerCase())) {
-          _activeCallStatusTimer?.cancel();
-          await _leaveAgoraChannel();
-        }
-      } catch (e) {
-        debugPrint('Active call status poll error: $e');
-      }
-    });
-  }
-
-  void _stopStatusPolling() {
-    _statusPollTimer?.cancel();
-    _statusPollTimer = null;
-  }
-
-  void _stopActiveCallStatusPolling() {
-    _activeCallStatusTimer?.cancel();
-    _activeCallStatusTimer = null;
   }
 
   // Setup Agora Engine and Join Channel
@@ -389,7 +341,7 @@ class CallController extends GetxController {
       agoraLog.clear();
       connectionStatus.value = 'Initializing...';
       _addLog('AppId=${agoraAppId.substring(0, 8)}... Channel=$channelName UID=$uid');
-      _addLog('Token=${token.isEmpty ? "EMPTY!" : token.substring(0, 20) + "..."}');
+      _addLog('Token=${token.isEmpty ? "EMPTY!" : "${token.substring(0, 20)}..."}');
 
       if (token.isEmpty) {
         _addLog('ERROR: Token is empty! Agora will reject the connection.');
@@ -514,8 +466,6 @@ class CallController extends GetxController {
 
   Future<void> _leaveAgoraChannel() async {
     _durationTimer?.cancel();
-    _stopStatusPolling();
-    _stopActiveCallStatusPolling();
     try {
       if (rtcEngine != null) {
         await rtcEngine!.leaveChannel();
